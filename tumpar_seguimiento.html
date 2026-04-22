@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tumpar — Seguimiento de Pedido</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --charcoal:   #1a1a1a;
+      --dark:       #0d0d0d;
+      --mid:        #2e2e2e;
+      --stone:      #4a4a4a;
+      --warm-grey:  #8a8680;
+      --light-grey: #c8c5c0;
+      --cream:      #f5f2ee;
+      --off-white:  #faf9f7;
+      --white:      #ffffff;
+      --accent:     #b8964a;
+      --accent-lt:  #d4b577;
+      --divider:    rgba(184,150,74,.25);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--off-white);
+      color: var(--charcoal);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────────── */
+    header {
+      background: var(--dark);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 80px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(184,150,74,.18);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .logo-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .header-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-style: italic;
+      color: var(--warm-grey);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── HERO ────────────────────────────────────────────────────── */
+    .hero {
+      background: var(--dark);
+      padding: 80px 40px 70px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 50% 110%, rgba(184,150,74,.12) 0%, transparent 70%),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px,
+          transparent 59px,
+          rgba(255,255,255,.025) 59px,
+          rgba(255,255,255,.025) 60px
+        );
+    }
+
+    .hero-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 5vw, 62px);
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.15;
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent-lt);
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--light-grey);
+      max-width: 540px;
+      margin: 0 auto;
+      position: relative;
+      font-weight: 300;
+    }
+
+    /* ── MAIN CONTAINER ─────────────────────────────────────────── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── SECTION HEADER ─────────────────────────────────────────── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-top: 60px;
+    }
+
+    .section-number {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      min-width: 28px;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--divider);
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--charcoal);
+      line-height: 1.2;
+    }
+
+    /* ── TRACKING WIDGET ────────────────────────────────────────── */
+    .widget-card {
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,.07);
+      border-top: 3px solid var(--accent);
+      border-radius: 2px;
+      padding: 36px 32px;
+      box-shadow: 0 4px 32px rgba(0,0,0,.06);
+    }
+
+    .widget-intro {
+      font-size: 14px;
+      color: var(--stone);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .widget-intro strong {
+      color: var(--charcoal);
+      font-weight: 500;
+    }
+
+    .widget-wrapper iframe {
+      border: none;
+      width: 100%;
+      height: 310px;
+      display: block;
+    }
+
+    /* ── POLÍTICAS ───────────────────────────────────────────────── */
+    .policies-intro {
+      font-size: 14px;
+      color: var(--stone);
+      margin-bottom: 32px;
+      max-width: 680px;
+      line-height: 1.7;
+    }
+
+    .policy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: rgba(0,0,0,.06);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .policy-item {
+      background: var(--white);
+      padding: 28px 26px;
+      transition: background .2s ease;
+    }
+
+    .policy-item:hover { background: var(--cream); }
+
+    .policy-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(184,150,74,.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .policy-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .policy-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .policy-text {
+      font-size: 13px;
+      color: var(--stone);
+      line-height: 1.65;
+    }
+
+    .policy-tag {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 11px;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(184,150,74,.12);
+      color: var(--accent);
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+
+    /* ── AVISO LEGAL ────────────────────────────────────────────── */
+    .notice-bar {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: var(--cream);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .notice-bar p {
+      font-size: 12.5px;
+      color: var(--stone);
+      line-height: 1.65;
+    }
+
+    .notice-bar strong {
+      color: var(--charcoal);
+      font-weight: 500;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(184,150,74,.18);
+      padding: 36px 40px 28px;
+      margin-top: 60px;
+    }
+
+    .footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .footer-logo-mark {
+      width: 52px;
+      height: 52px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .footer-logo-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .footer-contact {
+      text-align: right;
+    }
+
+    .footer-contact p {
+      font-size: 13px;
+      color: var(--warm-grey);
+      line-height: 1.8;
+    }
+
+    .footer-contact a {
+      color: var(--accent-lt);
+      text-decoration: none;
+    }
+
+    .footer-bottom {
+      max-width: 960px;
+      margin: 20px auto 0;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .footer-bottom p {
+      font-size: 11px;
+      color: var(--stone);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 680px) {
+      header { padding: 0 20px; }
+      .header-tagline { display: none; }
+      .hero { padding: 56px 24px 52px; }
+      .policy-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-contact { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────────── -->
+<header>
+  <div class="header-logo">
+    <div class="logo-mark">
+      <img src="data:image/jpeg;base64,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" alt="Tumpar" />
+    </div>
+  </div>
+  <p class="header-tagline">Entrega confiable, desde nuestra bodega hasta su obra</p>
+</header>
+
+<!-- ── HERO ────────────────────────────────────────────────────────── -->
+<div class="hero">
+  <p class="hero-eyebrow">Portal de cliente</p>
+  <h1>Su pedido,<br><em>bajo control.</em></h1>
+  <p class="hero-sub">Consulte el estado de su entrega en tiempo real y conozca las condiciones que garantizan la correcta recepción de su material.</p>
+</div>
+
+<!-- ── MAIN ─────────────────────────────────────────────────────────── -->
+<main>
+
+  <!-- WIDGET DE SEGUIMIENTO -->
+  <div class="section-header">
+    <span class="section-number">01</span>
+    <div class="section-line"></div>
+    <h2 class="section-title">Seguimiento de pedido</h2>
+  </div>
+
+  <div class="widget-card">
+    <p class="widget-intro">
+      Ingrese el número de su pedido o guía de despacho para consultar la <strong>ubicación y estado actualizado</strong> de su entrega. La información se actualiza en tiempo real desde nuestra flota de distribución.
+    </p>
+    <div class="widget-wrapper">
+      <iframe
+        name="beetrack-widget"
+        id="beetrack-widget"
+        frameborder="0"
+        width="100%"
+        height="310px"
+        src="https://tumparltda.dispatchtrack.com/widget/UN0Rm6aLGki1iBhydxr1jA"
+        title="Seguimiento de entrega Tumpar"
+      ></iframe>
+    </div>
+  </div>
+
+  <!-- CONDICIONES DE ENTREGA -->
+  <div class="section-header">
+    <span class="section-number">02</span>
+    <div class="section-line"></div>
+    <h2 class="section-title">Condiciones de entrega en obra</h2>
+  </div>
+
+  <p class="policies-intro">
+    Para garantizar una entrega exitosa de su porcelanato, grifería o sanitarios, le pedimos verificar que se cumplan las siguientes condiciones antes de la llegada de nuestra unidad. El incumplimiento puede derivar en reprogramación con cargos asociados.
+  </p>
+
+  <div class="policy-grid">
+
+    <div class="policy-item">
+      <div class="policy-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/><path d="M17 6l4 6-4 6"/></svg>
+      </div>
+      <p class="policy-title">Acceso vehicular</p>
+      <p class="policy-text">La vía de acceso debe ser apta para vehículos de alto tonelaje (camiones de 10–12 toneladas). En caso de restricciones horarias municipales o vecinales, notifique con anticipación.</p>
+      <span class="policy-tag">Obligatorio</span>
+    </div>
+
+    <div class="policy-item">
+      <div class="policy-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <p class="policy-title">Zona de descarga</p>
+      <p class="policy-text">Debe existir un área nivelada, limpia y despejada con capacidad de maniobra. Para entregas en altura o sótanos, los medios mecánicos (grúas, montacargas) deben ser provistos por el cliente.</p>
+      <span class="policy-tag">Obligatorio</span>
+    </div>
+
+    <div class="policy-item">
+      <div class="policy-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <p class="policy-title">Responsable en obra</p>
+      <p class="policy-text">La recepción se realiza únicamente ante la presencia del titular del pedido o un responsable autorizado debidamente identificado. No se efectúan entregas sin persona de contacto.</p>
+      <span class="policy-tag">Obligatorio</span>
+    </div>
+
+    <div class="policy-item">
+      <div class="policy-icon">
+        <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <p class="policy-title">Inspección y conformidad</p>
+      <p class="policy-text">Dispone de <strong>30 a 45 minutos</strong> para verificar cantidades y estado físico del material. La firma de la orden de entrega implica aceptación a conformidad, extinguiendo reclamos por daños estéticos o faltantes evidentes.</p>
+      <span class="policy-tag">Plazo límite</span>
+    </div>
+
+    <div class="policy-item">
+      <div class="policy-icon">
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
+      <p class="policy-title">Registro fotográfico</p>
+      <p class="policy-text">Nuestro transportista tomará registro fotográfico del material entregado en obra como respaldo del cumplimiento del servicio. Esto protege tanto al cliente como a la empresa.</p>
+      <span class="policy-tag">Estándar</span>
+    </div>
+
+    <div class="policy-item">
+      <div class="policy-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <p class="policy-title">Entrega fallida</p>
+      <p class="policy-text">Si la entrega no se concreta por causas imputables al cliente (obra cerrada, sin personal, acceso bloqueado), se aplicará un cargo de almacenaje y re-despacho proporcional al flete original.</p>
+      <span class="policy-tag">Cargo aplicable</span>
+    </div>
+
+    <div class="policy-item">
+      <div class="policy-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <p class="policy-title">Seguridad en obra</p>
+      <p class="policy-text">Nuestro personal cumple protocolos de EPP. Si la obra requiere inducción previa o seguros específicos (SCTR u otros), deben coordinarse con <strong>48 horas de anticipación</strong>.</p>
+      <span class="policy-tag">Coordinación previa</span>
+    </div>
+
+    <div class="policy-item">
+      <div class="policy-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 10H7M21 6H3M21 14H3M21 18H7"/></svg>
+      </div>
+      <p class="policy-title">Límites del servicio</p>
+      <p class="policy-text">El transportista entrega el material «a pie de camión» o en el área de acopio a nivel de suelo. No se realizan traslados internos manuales entre pisos ni distancias mayores a 10 metros, salvo acuerdo previo y pago de estiba.</p>
+      <span class="policy-tag">Alcance del servicio</span>
+    </div>
+
+  </div>
+
+  <!-- RECLAMOS -->
+  <div class="notice-bar">
+    <p>
+      <strong>Reclamo por material observado:</strong> Cualquier material con daños deberá reportarse al transportista en el momento de la entrega mediante el formulario de reposición que éste proporcionará, acompañado de registro fotográfico. Reclamos posteriores no sustentados en este documento no serán admitidos.
+      Consultas al <strong>+591 77053625</strong>.
+    </p>
+  </div>
+
+</main>
+
+<!-- ── FOOTER ───────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo-mark">
+      <img src="data:image/jpeg;base64,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" alt="Tumpar" />
+    </div>
+    <div class="footer-contact">
+      <p>Contacto: <a href="tel:+59177053625">+591 77053625</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Tumpar S.R.L. — Todos los derechos reservados.</p>
+    <p>Política de entregas v1.0 · Actualizada 2025</p>
+  </div>
+</footer>
+
+</body>
+</html>
